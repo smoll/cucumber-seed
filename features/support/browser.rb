@@ -17,8 +17,12 @@ class Browser
     end
 
     def stop
-      @browser.close # if a page hangs this will fail with a selenium unknown error
-    ensure
+      begin
+        @browser.close # if a page hangs this will fail with a selenium unknown error
+      rescue Selenium::WebDriver::Error::UnknownError
+        puts 'Failed to close old browser (possibly because page is hanging); starting new one!'
+      end
+
       @docker.tear_down if @docker
     end
 
